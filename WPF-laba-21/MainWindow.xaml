@@ -1,0 +1,68 @@
+﻿<Window x:Class="WPF_laba_21.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_laba_21"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="500" Width="460" Loaded="Window_Loaded">
+    <Grid Background="Lavender">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="25"/>
+            <RowDefinition/>
+            <RowDefinition Height="25"/>
+            <RowDefinition/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="80"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid x:Name="facultyGrid" AutoGenerateColumns="False" Grid.Row="0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Код" Binding="{Binding Код}"/>
+                <DataGridTextColumn Header="Факультет" Binding="{Binding Факультет}"/>
+                <DataGridTextColumn Header="Курс" Binding="{Binding Курс}"/>
+                <DataGridTextColumn Header="Количество групп" Binding="{Binding Количество групп}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <ToolBar Grid.Row="1" Height="25"/>
+
+        <DataGrid x:Name="groupGrid" AutoGenerateColumns="False" Grid.Row="2">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Код" Binding="{Binding Код}"/>
+                <DataGridTextColumn Header="Название группы" Binding="{Binding Название группы}"/>
+                <DataGridTextColumn Header="Фамилия старосты" Binding="{Binding Фамилия старосты}"/>
+                <DataGridTextColumn Header="Количество" Binding="{Binding Количество}"/>
+                <DataGridTextColumn Header="Факультет ID" Binding="{Binding Факультет ID}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <ToolBar Grid.Row="3" Height="25"/>
+
+        <DataGrid x:Name="studentGrid" AutoGenerateColumns="False" Grid.Row="4">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Код" Binding="{Binding Код}"/>
+                <DataGridTextColumn Header="ФИО" Binding="{Binding ФИО}"/>
+                <DataGridTextColumn Header="Адрес" Binding="{Binding Адрес}"/>
+                <DataGridTextColumn Header="Телефон" Binding="{Binding Телефон}"/>
+                <DataGridTextColumn Header="Группа ID" Binding="{Binding ID_GR}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <ToolBar Grid.Row="5" Height="25"/>
+
+        <StackPanel Grid.Row="6" Orientation="Vertical" VerticalAlignment="Bottom">
+            <Label Content="Поиск по символам" Margin="5, 0, 0, 0"/>
+            <TextBox Width="110" HorizontalAlignment="Left" Margin="10, 3, 0, 10"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="6" Orientation="Vertical" VerticalAlignment="Bottom">
+            <Label Content="Точный поиск" Margin="140, 0, 10, 0"/>
+            <TextBox Width="110" HorizontalAlignment="Left" Margin="145, 3, 0, 10"/>
+        </StackPanel>
+
+        <Button Grid.Row="6" Content="Сортировать" Height="20" Width="90" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0, 10, 10, 10"/>
+    </Grid>
+</Window>
