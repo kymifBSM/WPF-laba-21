@@ -55,14 +55,14 @@
 
         <StackPanel Grid.Row="6" Orientation="Vertical" VerticalAlignment="Bottom">
             <Label Content="Поиск по символам" Margin="5, 0, 0, 0"/>
-            <TextBox Width="110" HorizontalAlignment="Left" Margin="10, 3, 0, 10"/>
+            <TextBox x:Name="TB_Sym_Search" Width="110" HorizontalAlignment="Left" Margin="10, 3, 0, 10"/>
         </StackPanel>
 
         <StackPanel Grid.Row="6" Orientation="Vertical" VerticalAlignment="Bottom">
             <Label Content="Точный поиск" Margin="140, 0, 10, 0"/>
-            <TextBox Width="110" HorizontalAlignment="Left" Margin="145, 3, 0, 10"/>
+            <TextBox x:Name="TB_Acc_Search" Width="110" HorizontalAlignment="Left" Margin="145, 3, 0, 10"/>
         </StackPanel>
 
-        <Button Grid.Row="6" Content="Сортировать" Height="20" Width="90" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0, 10, 10, 10"/>
+        <Button Grid.Row="6" Content="Сортировать" Height="20" Width="90" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0, 10, 10, 10" Click="Tables_Search"/>
     </Grid>
 </Window>

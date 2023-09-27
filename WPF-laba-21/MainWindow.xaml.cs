@@ -47,5 +47,22 @@ namespace WPF_laba_21
             }
         }
 
+        private void Tables_Search(object sender, RoutedEventArgs e) 
+        {
+            string searchSymbols = TB_Sym_Search.Text.ToString();
+            string searchAccuracy = TB_Acc_Search.Text;
+
+            DataView facultyView = facultyGrid.ItemsSource as DataView;
+            DataView groupView = groupGrid.ItemsSource as DataView;
+            DataView studentView = studentGrid.ItemsSource as DataView;
+
+            if (!string.IsNullOrWhiteSpace(searchSymbols)){
+                facultyView.RowFilter = $"[Факультет] LIKE '{searchSymbols}'";
+            } else
+            {
+                facultyView.RowFilter = "";
+            }
+        }
+
     }
 }
