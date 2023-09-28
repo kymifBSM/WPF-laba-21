@@ -122,5 +122,8 @@
   <ItemGroup>
     <Resource Include="crss.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="rfrsh.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

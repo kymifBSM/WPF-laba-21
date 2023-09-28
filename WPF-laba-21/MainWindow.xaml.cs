@@ -19,6 +19,7 @@ namespace WPF_laba_21
 {
     public partial class MainWindow : Window
     {
+        private string connectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\DBs\Database111.accdb";
         public MainWindow()
         {
             InitializeComponent();
@@ -71,8 +72,17 @@ namespace WPF_laba_21
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
 
+                Button rfrshBtn = new Button
+                {
+                    Width = 23,
+                    Height = 25,
+                    HorizontalContentAlignment = HorizontalAlignment.Center,
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+
                 plsBtn.Click += Insert_Click;
                 crssBtn.Click += Delete_Click;
+                rfrshBtn.Click += Refresh_Click;
 
                 TextBox tbPg = new TextBox
                 {
@@ -136,6 +146,14 @@ namespace WPF_laba_21
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center
                 };
+                Image imgRfrsh = new Image
+                {
+                    Source = new BitmapImage(new Uri("rfrsh.png", UriKind.Relative)),
+                    Width = 17,
+                    Height = 17,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
 
                 bckLstBtn.Content = imgBckLst;
                 bckBtn.Content = imgBck;
@@ -143,6 +161,7 @@ namespace WPF_laba_21
                 nxtLstBtn.Content = imgNxtLst;
                 plsBtn.Content = imgPls;
                 crssBtn.Content = imgCrss;
+                rfrshBtn.Content = imgRfrsh;
 
                 tb.Items.Add(bckLstBtn);
                 tb.Items.Add(bckBtn);
@@ -152,44 +171,16 @@ namespace WPF_laba_21
                 tb.Items.Add(nxtLstBtn);
                 tb.Items.Add(plsBtn);
                 tb.Items.Add(crssBtn);
+                tb.Items.Add(rfrshBtn);
             }
+   
         }
 
-        private void Insert_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Delete_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        /// <summary>
-        /// <c>БД ПОДКЛЮЧАЕМ И ЗАПОЛНЯЕМ</c>
-        /// </summary>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            string connectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\user.COMP-02.000\source\db\Database111.mdb";
-            string[] queries = { "SELECT * FROM Факультет", "SELECT * FROM Группа", "SELECT * FROM Студенты" };
-            DataGrid[] grids = { facultyGrid, groupGrid, studentGrid };
-
-            using (OleDbConnection connection = new OleDbConnection(connectionString))
-            {
-                connection.Open();
-
-                for (int i = 0; i < queries.Length; i++)
-                {
-                    OleDbDataAdapter adapter = new OleDbDataAdapter(queries[i], connection);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-                    grids[i].ItemsSource = dataTable.DefaultView;
-                }
-            }
+            RefreshDataGrids();
         }
-        /// <summary>
-        /// <c>ДЕЛАЕТ ПОСИМВОЛЬНЫЙ И ТОЧНЫЙ ПОИСК(через запросы в Access)</c>
-        /// </summary>
+
         private void Tables_Search(object sender, RoutedEventArgs e) 
         {
             string searchSymbols = TB_Sym_Search.Text;
@@ -241,6 +232,97 @@ namespace WPF_laba_21
                 facultyView.RowFilter = "";
                 groupView.RowFilter = "";
                 studentView.RowFilter = "";
+            }
+        }
+
+        public void RefreshDataGrids()
+        {
+            string[] queries = { "SELECT * FROM Факультет", "SELECT * FROM Группа", "SELECT * FROM Студенты" };
+            DataGrid[] grids = { facultyGrid, groupGrid, studentGrid };
+
+            using (OleDbConnection connection = new OleDbConnection(connectionString))
+            {
+                connection.Open();
+
+                for (int i = 0; i < queries.Length; i++)
+                {
+                    grids[i].IsReadOnly = false;
+
+                    OleDbDataAdapter adapter = new OleDbDataAdapter(queries[i], connection);
+                    DataTable dataTable = new DataTable();
+                    adapter.Fill(dataTable);
+                    grids[i].ItemsSource = dataTable.DefaultView;
+
+                    grids[i].IsReadOnly = true;
+                }
+            }
+        }
+
+        private void Insert_Click(object sender, RoutedEventArgs e)
+        {
+            string clickedToolBar = null;
+
+            if (sender is Button button)
+            {
+                if (button.Parent is ToolBar toolBar)
+                {
+                    clickedToolBar = toolBar.Name;
+                }
+            }
+
+            InsertWin insertWin = new InsertWin(clickedToolBar);
+            insertWin.Show();
+        }
+
+        private void Delete_Click(object sender, RoutedEventArgs e)
+        {
+            Delete_Selected_Rows(facultyGrid, "Факультет");
+            Delete_Selected_Rows(groupGrid, "Группа");
+            Delete_Selected_Rows(studentGrid, "Студенты");
+        }
+
+        private void Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshDataGrids();
+        }
+
+        private void Delete_Selected_Rows(DataGrid grid, string tableName)
+        {
+            DataView dataView = grid.ItemsSource as DataView;
+
+            if (dataView != null)
+            {
+                List<DataRowView> selectedRows = new List<DataRowView>();
+                foreach (DataRowView rowView in dataView)
+                {
+                    if (rowView.Row.RowState == DataRowState.Added)
+                        continue;
+
+                    DataGridRow row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromItem(rowView);
+                    if (row != null && row.IsSelected)
+                    {
+                        selectedRows.Add(rowView);
+                    }
+                }
+
+                using (OleDbConnection connection = new OleDbConnection(connectionString))
+                {
+                    connection.Open();
+
+                    foreach (DataRowView rowView in selectedRows)
+                    {
+                        DataRow row = rowView.Row;
+                        int primaryKeyValue = (int)row["Код"];
+                        string deleteQuery = $"DELETE FROM {tableName} WHERE Код = {primaryKeyValue}";
+                        using (OleDbCommand command = new OleDbCommand(deleteQuery, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+                        row.Delete();
+                    }
+
+                    grid.Items.Refresh();
+                }
             }
         }
     }
